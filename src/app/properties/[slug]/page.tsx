@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getProperty } from '@/lib/api';
 import { LeadForm } from '@/components/LeadForm';
+import { PropertyGallery } from '@/components/PropertyGallery';
 import {
   formatPrice, formatSqm, formatThaiArea, localized, PROPERTY_TYPE_LABEL, LISTING_TYPE_LABEL,
 } from '@/lib/format';
@@ -47,12 +48,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
       </p>
       <h1 className="font-thai-display text-3xl font-light mb-6">{localized(p.title)}</h1>
 
-      <div className="aspect-[3/2] bg-ink-soft mb-8 overflow-hidden">
-        {p.coverImage?.url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.coverImage.url} alt={localized(p.coverImage.alt)} className="w-full h-full object-cover" />
-        )}
-      </div>
+      <PropertyGallery cover={p.coverImage} gallery={p.gallery} />
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-12">
         <div>
