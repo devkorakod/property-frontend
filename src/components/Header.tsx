@@ -6,7 +6,7 @@ export function Header({ settings }: { settings?: any }) {
     <header className="border-b border-white/10">
       <div className="max-w-container mx-auto px-5 py-5 flex items-center gap-8 flex-wrap">
         <Link href="/" className="font-display text-xl tracking-[.28em]">
-          D1<span className="text-red">·</span>LANDANDHOUSE
+          D1<span className="text-red">·</span>LAND AND HOUSE
         </Link>
         <nav className="flex gap-6 text-sm flex-wrap">
           <Link href="/properties?listingType=sale" className="hover:text-red transition-colors">ซื้อ</Link>
