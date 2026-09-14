@@ -45,6 +45,9 @@ export async function apiFetchPaginated<T>(path: string, opts: FetchOptions = {}
 
 export const getSettings = () => apiFetch<any>('/public/settings', { revalidate: 300, tags: ['settings'] });
 
+export const getPage = (key: string) =>
+  apiFetch<{ key: string; sections: any[] }>(`/public/pages/${key}`, { revalidate: 30, tags: [`page:${key}`] });
+
 export const listProperties = (params: Record<string, string | number | undefined> = {}) => {
   const qs = new URLSearchParams(
     Object.entries(params).filter(([, v]) => v !== undefined && v !== '') as [string, string][],
