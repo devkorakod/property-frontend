@@ -38,6 +38,10 @@ export default async function PropertiesPage({
         </select>
         <input name="zone" defaultValue={searchParams.zone ?? ''} placeholder="ทำเล เช่น ทองหล่อ"
                className="bg-ink-soft border border-white/20 px-3 py-2" />
+        <input name="minPrice" type="number" min={0} step={1000} defaultValue={searchParams.minPrice ?? ''}
+               placeholder="ราคาต่ำสุด" className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
+        <input name="maxPrice" type="number" min={0} step={1000} defaultValue={searchParams.maxPrice ?? ''}
+               placeholder="ราคาสูงสุด" className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
         <button className="bg-red hover:bg-red-bright text-white px-6 py-2 uppercase text-xs tracking-[.14em]">
           ค้นหา
         </button>
