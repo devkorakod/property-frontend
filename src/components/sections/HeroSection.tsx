@@ -11,8 +11,18 @@ export function HeroSection({ data }: { data: HeroData }) {
   return (
     <section className="relative min-h-[70vh] flex items-end pb-24 overflow-hidden bg-ink-soft">
       {data.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={data.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={data.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(0deg, rgba(22,23,26,.95) 0%, rgba(22,23,26,.65) 45%, rgba(22,23,26,.15) 75%), ' +
+                'linear-gradient(90deg, rgba(22,23,26,.9) 0%, rgba(22,23,26,.45) 40%, rgba(22,23,26,0) 65%)',
+            }}
+          />
+        </>
       )}
       <div className="max-w-container mx-auto px-5 relative z-10 max-w-2xl">
         {data.eyebrow && <p className="eyebrow mb-4">{data.eyebrow}</p>}
