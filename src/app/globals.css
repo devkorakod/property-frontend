@@ -1,0 +1,30 @@
+@import '../styles/tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: var(--color-ink);
+  color: var(--color-text-light);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.font-thai-display {
+  font-family: 'Noto Serif Thai', var(--font-display);
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-red);
+  font-weight: 500;
+}
+
+.rule {
+  height: 1px;
+  background: var(--color-line);
+  border: 0;
+}
