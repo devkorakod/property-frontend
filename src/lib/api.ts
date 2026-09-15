@@ -1,4 +1,4 @@
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+export const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
 interface FetchOptions extends RequestInit {
   /** วินาทีที่ให้ Next.js cache หน้า (ISR) — 0 = ไม่ cache */
@@ -64,6 +64,8 @@ export const getProject = (slug: string) =>
   apiFetch<any>(`/public/projects/${slug}`, { revalidate: 300, tags: [`project:${slug}`] });
 
 export const listActivePromotions = () => apiFetch<any[]>('/public/promotions', { revalidate: 60 });
+
+export const getAgent = (id: string) => apiFetch<any>(`/public/agents/${id}`, { revalidate: 300 });
 
 export interface LeadPayload {
   source: string; name: string; phone: string; email?: string; intent: string;

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { formatPrice, formatSqm, localized, PROPERTY_TYPE_LABEL } from '@/lib/format';
+import { FavoriteQuickButton } from '@/components/FavoriteQuickButton';
 
 export function PropertyCard({ p }: { p: any }) {
   const price = p.price?.hidePrice ? 'ติดต่อสอบถาม'
@@ -19,6 +20,10 @@ export function PropertyCard({ p }: { p: any }) {
             แนะนำ
           </span>
         )}
+        <FavoriteQuickButton property={{
+          id: p.id, slug: p.slug, title: localized(p.title), coverUrl: p.coverImage?.url,
+          price: p.promotion?.finalPrice ?? p.price?.sale ?? p.price?.rentMonthly, code: p.code,
+        }} />
       </div>
       <div className="pt-4">
         <p className="text-xs text-muted">{p.location?.zone} · {p.code}</p>

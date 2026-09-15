@@ -1,8 +1,13 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getProperty } from '@/lib/api';
+import { getProperty, getSettings } from '@/lib/api';
 import { LeadForm } from '@/components/LeadForm';
 import { PropertyGallery } from '@/components/PropertyGallery';
+import { LoanCalculator } from '@/components/LoanCalculator';
+import { FavoriteButton } from '@/components/FavoriteButton';
+import { ShareButtons } from '@/components/ShareButtons';
+import { PropertyMap } from '@/components/PropertyMap';
 import {
   formatPrice, formatSqm, formatThaiArea, localized, PROPERTY_TYPE_LABEL, LISTING_TYPE_LABEL,
 } from '@/lib/format';
@@ -27,8 +32,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function PropertyDetailPage({ params }: { params: { slug: string } }) {
-  const p = await loadProperty(params.slug);
+  const [p, settings] = await Promise.all([
+    loadProperty(params.slug),
+    getSettings().catch(() => null),
+  ]);
   if (!p) notFound();
+  const loanDefaults = settings?.loanDefaults ?? { interestRate: 3.5, termYears: 30, downPaymentPercent: 10 };
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -46,7 +55,16 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
       <p className="eyebrow mb-2">
         {PROPERTY_TYPE_LABEL[p.propertyType]} · {LISTING_TYPE_LABEL[p.listingType]} · {p.code}
       </p>
-      <h1 className="font-thai-display text-3xl font-light mb-6">{localized(p.title)}</h1>
+      <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
+        <h1 className="font-thai-display text-3xl font-light">{localized(p.title)}</h1>
+        <div className="flex items-center gap-3">
+          <FavoriteButton property={{
+            id: p.id, slug: p.slug, title: localized(p.title), coverUrl: p.coverImage?.url,
+            price: p.promotion?.finalPrice ?? p.price?.sale ?? p.price?.rentMonthly, code: p.code,
+          }} />
+          <ShareButtons title={localized(p.title)} />
+        </div>
+      </div>
 
       <PropertyGallery cover={p.coverImage} gallery={p.gallery} />
 
@@ -81,9 +99,18 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
           )}
 
           {p.location?.address && (
-            <p className="text-sm text-muted">
+            <p className="text-sm text-muted mb-6">
               ทำเล: {localized(p.location.address)} {p.location.zone ? `(${p.location.zone})` : ''}
             </p>
+          )}
+
+          {p.location?.geo?.coordinates && <PropertyMap coordinates={p.location.geo.coordinates} />}
+
+          {p.listingType === 'sale' && p.price?.sale && !p.price?.hidePrice && (
+            <div className="mt-10 pt-10 border-t border-white/10">
+              <h2 className="font-thai-display text-xl font-light mb-6">คำนวณสินเชื่อเบื้องต้น</h2>
+              <LoanCalculator defaults={loanDefaults} initialPrice={p.promotion?.finalPrice ?? p.price.sale} compact />
+            </div>
           )}
         </div>
 
@@ -92,7 +119,10 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
             <div className="mb-6 pb-6 border-b border-white/10">
               <p className="text-xs text-muted mb-1">ผู้ดูแลทรัพย์</p>
               <p className="font-thai-display text-lg">{p.agent.name}</p>
-              {p.agent.phone && <a href={`tel:${p.agent.phone}`} className="text-red text-sm">{p.agent.phone}</a>}
+              {p.agent.phone && <a href={`tel:${p.agent.phone}`} className="text-red text-sm block">{p.agent.phone}</a>}
+              <Link href={`/agents/${p.agent.id}`} className="text-xs text-muted hover:text-red underline">
+                ดูทรัพย์ทั้งหมดของตัวแทนนี้
+              </Link>
             </div>
           )}
           <LeadForm propertyId={p.id} source="property_form" />

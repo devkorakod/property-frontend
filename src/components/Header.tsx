@@ -12,6 +12,8 @@ export function Header({ settings }: { settings?: any }) {
           <Link href="/properties?listingType=sale" className="hover:text-red transition-colors">ซื้อ</Link>
           <Link href="/properties?listingType=rent" className="hover:text-red transition-colors">เช่า</Link>
           <Link href="/projects" className="hover:text-red transition-colors">โครงการ</Link>
+          <Link href="/loan-calculator" className="hover:text-red transition-colors">คำนวณสินเชื่อ</Link>
+          <Link href="/favorites" className="hover:text-red transition-colors">รายการโปรด</Link>
           <Link href="/contact" className="hover:text-red transition-colors">ติดต่อเรา</Link>
         </nav>
         <a
