@@ -15,6 +15,12 @@ body {
   font-family: 'Noto Serif Thai', var(--font-display);
 }
 
+/* Cormorant Garamond ใช้เลขแบบ old-style เป็นค่าเริ่มต้น (บางตัวเลขจมใต้เส้นบรรทัด
+   เช่น 3 4 7 9) ดูเหมือนเลขเพี้ยนตอนโชว์ราคา — บังคับใช้เลขแบบ lining แทน */
+.font-display {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
 .eyebrow {
   font-size: 11px;
   letter-spacing: .22em;
