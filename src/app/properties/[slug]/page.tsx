@@ -10,7 +10,7 @@ import { FavoriteButton } from '@/components/FavoriteButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { PropertyMap } from '@/components/PropertyMap';
 import {
-  formatPrice, formatSqm, formatThaiArea, localized, propertyTypeLabel, listingTypeLabel,
+  formatPrice, formatSqm, formatThaiArea, localized, propertyTypeLabel, listingTypeLabel, zoneLabel,
 } from '@/lib/format';
 import { ApiClientError } from '@/lib/api';
 import { getLocale } from '@/lib/locale';
@@ -105,7 +105,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
 
           {p.location?.address && (
             <p className="text-sm text-muted mb-6">
-              {t(locale, 'propertyDetail_zonePrefix')}: {localized(p.location.address, locale)} {p.location.zone ? `(${p.location.zone})` : ''}
+              {t(locale, 'propertyDetail_zonePrefix')}: {localized(p.location.address, locale)} {zoneLabel(p.location, locale) ? `(${zoneLabel(p.location, locale)})` : ''}
             </p>
           )}
 

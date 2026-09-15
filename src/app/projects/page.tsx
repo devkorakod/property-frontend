@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { listProjects } from '@/lib/api';
-import { localized } from '@/lib/format';
+import { localized, zoneLabel } from '@/lib/format';
 import { getLocale } from '@/lib/locale';
 import { t } from '@/lib/i18n';
 
@@ -31,7 +31,7 @@ export default async function ProjectsPage() {
                 )}
               </div>
               <h3 className="font-thai-display text-lg mt-4">{localized(pr.name, locale)}</h3>
-              <p className="text-xs text-muted mt-1">{pr.location?.zone}</p>
+              <p className="text-xs text-muted mt-1">{zoneLabel(pr.location, locale)}</p>
             </Link>
           ))}
         </div>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatPrice, formatSqm, localized, propertyTypeLabel } from '@/lib/format';
+import { formatPrice, formatSqm, localized, propertyTypeLabel, zoneLabel } from '@/lib/format';
 import { FavoriteQuickButton } from '@/components/FavoriteQuickButton';
 import { CompareQuickButton } from '@/components/CompareQuickButton';
 import { t } from '@/lib/i18n';
@@ -32,11 +32,11 @@ export function PropertyCard({ p, locale = 'th' }: { p: any; locale?: Locale }) 
           id: p.id, slug: p.slug, title: localized(p.title, locale), coverUrl: p.coverImage?.url,
           price: p.promotion?.finalPrice ?? p.price?.sale ?? p.price?.rentMonthly, code: p.code,
           propertyType: p.propertyType, listingType: p.listingType, spec: p.spec, area: p.area,
-          location: { zone: p.location?.zone },
+          location: { zone: p.location?.zone, zoneEn: p.location?.zoneEn },
         }} />
       </div>
       <div className="pt-4">
-        <p className="text-xs text-muted">{p.location?.zone} · {p.code}</p>
+        <p className="text-xs text-muted">{zoneLabel(p.location, locale)} · {p.code}</p>
         <h3 className="font-thai-display text-lg mt-1 line-clamp-1">{localized(p.title, locale)}</h3>
         <p className="text-xs text-muted mt-1">
           {propertyTypeLabel(p.propertyType, locale)}

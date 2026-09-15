@@ -1,14 +1,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { localized } from '@/lib/format';
+import { getLocale } from '@/lib/locale';
+
+type Text = string | { th?: string; en?: string };
 
 export interface HeroData {
-  eyebrow?: string; title?: string; titleEm?: string; subtitle?: string;
-  primaryCtaLabel?: string; primaryCtaHref?: string;
-  secondaryCtaLabel?: string; secondaryCtaHref?: string;
+  eyebrow?: Text; title?: Text; titleEm?: Text; subtitle?: Text;
+  primaryCtaLabel?: Text; primaryCtaHref?: string;
+  secondaryCtaLabel?: Text; secondaryCtaHref?: string;
   imageUrl?: string;
 }
 
 export function HeroSection({ data }: { data: HeroData }) {
+  const locale = getLocale();
+  const eyebrow = localized(data.eyebrow, locale);
+  const title = localized(data.title, locale);
+  const titleEm = localized(data.titleEm, locale);
+  const subtitle = localized(data.subtitle, locale);
+  const primaryCtaLabel = localized(data.primaryCtaLabel, locale);
+  const secondaryCtaLabel = localized(data.secondaryCtaLabel, locale);
+
   return (
     <section className="relative min-h-[70vh] flex items-end pb-24 overflow-hidden bg-ink-soft">
       {data.imageUrl && (
@@ -25,21 +37,21 @@ export function HeroSection({ data }: { data: HeroData }) {
         </>
       )}
       <div className="max-w-container mx-auto px-5 relative z-10 max-w-2xl">
-        {data.eyebrow && <p className="eyebrow mb-4">{data.eyebrow}</p>}
+        {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
         <h1 className="font-thai-display font-light text-[clamp(34px,5.6vw,62px)] leading-tight mb-5">
-          {data.title}
-          {data.titleEm && <><br /><em className="not-italic text-red-bright">{data.titleEm}</em></>}
+          {title}
+          {titleEm && <><br /><em className="not-italic text-red-bright">{titleEm}</em></>}
         </h1>
-        {data.subtitle && <p className="text-white/75 max-w-[52ch] mb-8">{data.subtitle}</p>}
+        {subtitle && <p className="text-white/75 max-w-[52ch] mb-8">{subtitle}</p>}
         <div className="flex gap-3 flex-wrap">
-          {data.primaryCtaLabel && (
+          {primaryCtaLabel && (
             <Link href={data.primaryCtaHref || '#'} className="bg-red hover:bg-red-bright text-white px-8 py-3.5 text-xs uppercase tracking-[.16em]">
-              {data.primaryCtaLabel}
+              {primaryCtaLabel}
             </Link>
           )}
-          {data.secondaryCtaLabel && (
+          {secondaryCtaLabel && (
             <Link href={data.secondaryCtaHref || '#'} className="border border-red text-red-bright hover:bg-red hover:text-white px-8 py-3.5 text-xs uppercase tracking-[.16em] transition-colors">
-              {data.secondaryCtaLabel}
+              {secondaryCtaLabel}
             </Link>
           )}
         </div>

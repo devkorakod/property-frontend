@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { readCompare, removeFromCompare, onCompareChange, type CompareProperty } from '@/lib/compare';
-import { formatPrice, formatSqm, propertyTypeLabel } from '@/lib/format';
+import { formatPrice, formatSqm, propertyTypeLabel, zoneLabel } from '@/lib/format';
 import { useLocale } from '@/lib/useLocale';
 import { t } from '@/lib/i18n';
 
@@ -22,7 +22,7 @@ export default function ComparePage() {
   const rows: { label: string; render: (p: CompareProperty) => React.ReactNode }[] = [
     { label: t(locale, 'compare_row_price'), render: (p) => <span className="text-red-bright font-display">{formatPrice(p.price, locale)}</span> },
     { label: t(locale, 'compare_row_type'), render: (p) => propertyTypeLabel(p.propertyType, locale) || '—' },
-    { label: t(locale, 'compare_row_zone'), render: (p) => p.location?.zone || '—' },
+    { label: t(locale, 'compare_row_zone'), render: (p) => zoneLabel(p.location, locale) || '—' },
     { label: t(locale, 'compare_row_bedrooms'), render: (p) => p.spec?.bedrooms ?? '—' },
     { label: t(locale, 'compare_row_bathrooms'), render: (p) => p.spec?.bathrooms ?? '—' },
     { label: t(locale, 'compare_row_parking'), render: (p) => p.spec?.parking ?? '—' },

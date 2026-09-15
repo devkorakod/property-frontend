@@ -33,9 +33,21 @@ export function formatThaiArea(rai = 0, ngan = 0, wah = 0, locale: Locale = 'th'
   return parts.join(' ') || '-';
 }
 
-export function localized(v: { th?: string; en?: string } | undefined | null, locale: 'th' | 'en' = 'th') {
+type Localizable = string | { th?: string; en?: string } | undefined | null;
+
+/**
+ * รับได้ทั้ง {th,en} และ string เดี่ยวแบบเก่า (เช่น Page section data ที่บันทึกไว้ก่อนรองรับ EN)
+ * — string เดี่ยวถือเป็น fallback แสดงเหมือนกันทุกภาษา จนกว่าจะมีคนแก้ผ่านหลังบ้านอีกที
+ */
+export function localized(v: Localizable, locale: 'th' | 'en' = 'th'): string {
   if (!v) return '';
+  if (typeof v === 'string') return v;
   return ((locale === 'en' && v.en) ? v.en : v.th) ?? '';
+}
+
+export function zoneLabel(location: { zone?: string; zoneEn?: string } | undefined | null, locale: Locale = 'th'): string {
+  if (!location) return '';
+  return (locale === 'en' && location.zoneEn) ? location.zoneEn : (location.zone ?? '');
 }
 
 const PROPERTY_TYPE_LABELS: Record<Locale, Record<string, string>> = {

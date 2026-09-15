@@ -3,7 +3,7 @@ export interface CompareProperty {
   propertyType?: string; listingType?: string;
   spec?: { bedrooms?: number; bathrooms?: number; parking?: number };
   area?: { usableSqm?: number };
-  location?: { zone?: string };
+  location?: { zone?: string; zoneEn?: string };
 }
 
 const STORAGE_KEY = 'd1-compare';
