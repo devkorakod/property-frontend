@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PropertyCard } from '@/components/PropertyCard';
+import { getLocale } from '@/lib/locale';
 
 export interface PropertyGridData { eyebrow?: string; heading?: string }
 
@@ -7,6 +8,7 @@ export function PropertyGridSection({ data, items, moreHref = '/properties', bor
   data: PropertyGridData; items: any[]; moreHref?: string; bordered?: boolean;
 }) {
   if (items.length === 0) return null;
+  const locale = getLocale();
   return (
     <section className={`max-w-container mx-auto px-5 py-16 ${bordered ? 'border-t border-white/10' : ''}`}>
       <div className="flex items-end gap-6 flex-wrap mb-10">
@@ -19,7 +21,7 @@ export function PropertyGridSection({ data, items, moreHref = '/properties', bor
         </Link>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {items.map((p: any) => <PropertyCard key={p.id} p={p} />)}
+        {items.map((p: any) => <PropertyCard key={p.id} p={p} locale={locale} />)}
       </div>
     </section>
   );

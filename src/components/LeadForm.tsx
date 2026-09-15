@@ -24,7 +24,7 @@ export function LeadForm({ propertyId, source = 'general_form' }: { propertyId?:
         preferredTime: 'anytime',
         consentAccepted: true,
         pageUrl: typeof window !== 'undefined' ? window.location.href : undefined,
-        website: '',
+        website: String(form.get('website') || ''),
       });
       setMessage(result.message.th);
       setStatus('done');
@@ -41,6 +41,9 @@ export function LeadForm({ propertyId, source = 'general_form' }: { propertyId?:
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {/* honeypot กันบอท — ผู้ใช้จริงมองไม่เห็นและไม่ได้ tab ผ่าน ถ้ามีค่าคือบอท */}
+      <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+             className="absolute -left-[9999px] w-px h-px opacity-0" />
       <div className="grid sm:grid-cols-2 gap-4">
         <input name="name" required placeholder="ชื่อ–นามสกุล"
                className="bg-transparent border border-white/20 px-3 py-3 text-sm focus:border-red outline-none" />

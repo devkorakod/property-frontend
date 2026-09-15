@@ -10,6 +10,7 @@ export interface AlertCriteria {
 
 export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria }) {
   const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const hasCriteria = Object.values(criteria).some(Boolean);
@@ -21,7 +22,7 @@ export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria 
       const res = await fetch(`${BASE}/public/property-alerts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, ...criteria }),
+        body: JSON.stringify({ email, website, ...criteria }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json?.error?.message ?? 'ผิดพลาด');
@@ -47,6 +48,10 @@ export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria 
         <p className="text-green-500 text-sm">{message}</p>
       ) : (
         <form onSubmit={submit} className="flex gap-3 flex-wrap justify-center">
+          {/* honeypot กันบอท — ผู้ใช้จริงมองไม่เห็นและไม่ได้ tab ผ่าน ถ้ามีค่าคือบอท */}
+          <input name="website" value={website} onChange={(e) => setWebsite(e.target.value)}
+                 tabIndex={-1} autoComplete="off" aria-hidden="true"
+                 className="absolute -left-[9999px] w-px h-px opacity-0" />
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                  placeholder="อีเมลของคุณ" disabled={status === 'busy'}
                  className="bg-ink-soft border border-white/20 px-3 py-2 text-sm flex-1 min-w-[220px]" />

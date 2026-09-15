@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { getAgent, ApiClientError } from '@/lib/api';
 import { PropertyCard } from '@/components/PropertyCard';
+import { localized } from '@/lib/format';
+import { getLocale } from '@/lib/locale';
 
 async function loadAgent(id: string) {
   try {
@@ -20,14 +23,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function AgentPage({ params }: { params: { id: string } }) {
   const agent = await loadAgent(params.id);
   if (!agent) notFound();
+  const locale = getLocale();
 
   return (
     <div className="max-w-container mx-auto px-5 py-14">
       <div className="flex items-center gap-5 mb-12 pb-10 border-b border-white/10">
-        <div className="w-20 h-20 rounded-full bg-ink-soft overflow-hidden shrink-0">
+        <div className="w-20 h-20 rounded-full bg-ink-soft overflow-hidden shrink-0 relative">
           {agent.avatarUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover" />
+            <Image src={agent.avatarUrl} alt={agent.name} fill sizes="80px" className="object-cover" />
           )}
         </div>
         <div>
@@ -37,7 +40,7 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
             {agent.phone && <a href={`tel:${agent.phone}`} className="text-red hover:text-red-bright">{agent.phone}</a>}
             {agent.lineId && <span className="text-muted">LINE: {agent.lineId}</span>}
           </div>
-          {agent.bio?.th && <p className="text-muted text-sm mt-3 max-w-2xl">{agent.bio.th}</p>}
+          {agent.bio?.th && <p className="text-muted text-sm mt-3 max-w-2xl">{localized(agent.bio, locale)}</p>}
         </div>
       </div>
 
@@ -48,7 +51,7 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
         <p className="text-muted py-10 text-center">ยังไม่มีทรัพย์ที่เผยแพร่</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {agent.properties.map((p: any) => <PropertyCard key={p.id} p={p} />)}
+          {agent.properties.map((p: any) => <PropertyCard key={p.id} p={p} locale={locale} />)}
         </div>
       )}
     </div>

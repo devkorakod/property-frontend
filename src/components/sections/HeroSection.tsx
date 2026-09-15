@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface HeroData {
   eyebrow?: string; title?: string; titleEm?: string; subtitle?: string;
@@ -12,8 +13,7 @@ export function HeroSection({ data }: { data: HeroData }) {
     <section className="relative min-h-[70vh] flex items-end pb-24 overflow-hidden bg-ink-soft">
       {data.imageUrl && (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <Image src={data.imageUrl} alt="" fill priority sizes="100vw" className="object-cover" />
           <div
             className="absolute inset-0"
             style={{

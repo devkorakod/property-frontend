@@ -10,6 +10,8 @@ const nextConfig = {
     formats: ['image/webp'],
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'd1-landandhouse-backend.onrender.com' },
     ],
   },
   async headers() {

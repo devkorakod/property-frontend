@@ -3,6 +3,8 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { FloatingContact } from '@/components/FloatingContact';
+import { CompareBar } from '@/components/CompareBar';
+import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { getSettings } from '@/lib/api';
 
 export const metadata: Metadata = {
@@ -19,10 +21,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Serif+Thai:wght@300;400;500&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" />
       </head>
       <body>
+        <GoogleAnalytics />
         <Header settings={settings} />
         <main>{children}</main>
         <Footer settings={settings} />
         <FloatingContact settings={settings} />
+        <CompareBar />
       </body>
     </html>
   );

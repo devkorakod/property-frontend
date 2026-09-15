@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getProperty, getSettings } from '@/lib/api';
 import { LeadForm } from '@/components/LeadForm';
+import { PropertyCard } from '@/components/PropertyCard';
 import { PropertyGallery } from '@/components/PropertyGallery';
 import { LoanCalculator } from '@/components/LoanCalculator';
 import { FavoriteButton } from '@/components/FavoriteButton';
@@ -12,6 +13,7 @@ import {
   formatPrice, formatSqm, formatThaiArea, localized, PROPERTY_TYPE_LABEL, LISTING_TYPE_LABEL,
 } from '@/lib/format';
 import { ApiClientError } from '@/lib/api';
+import { getLocale } from '@/lib/locale';
 
 async function loadProperty(slug: string) {
   try {
@@ -25,9 +27,10 @@ async function loadProperty(slug: string) {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const p = await loadProperty(params.slug);
   if (!p) return {};
+  const locale = getLocale();
   return {
-    title: p.seo?.metaTitle?.th || localized(p.title),
-    description: p.seo?.metaDescription?.th || localized(p.description)?.slice(0, 160),
+    title: p.seo?.metaTitle?.th || localized(p.title, locale),
+    description: p.seo?.metaDescription?.th || localized(p.description, locale)?.slice(0, 160),
   };
 }
 
@@ -37,12 +40,13 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     getSettings().catch(() => null),
   ]);
   if (!p) notFound();
+  const locale = getLocale();
   const loanDefaults = settings?.loanDefaults ?? { interestRate: 3.5, termYears: 30, downPaymentPercent: 10 };
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
-    name: localized(p.title),
+    name: localized(p.title, locale),
     image: [p.coverImage?.url, ...(p.gallery ?? []).map((g: any) => g.url)].filter(Boolean),
     ...(p.price?.sale && !p.price?.hidePrice ? {
       offers: { '@type': 'Offer', price: p.promotion?.finalPrice ?? p.price.sale, priceCurrency: 'THB' },
@@ -56,13 +60,13 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         {PROPERTY_TYPE_LABEL[p.propertyType]} · {LISTING_TYPE_LABEL[p.listingType]} · {p.code}
       </p>
       <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
-        <h1 className="font-thai-display text-3xl font-light">{localized(p.title)}</h1>
+        <h1 className="font-thai-display text-3xl font-light">{localized(p.title, locale)}</h1>
         <div className="flex items-center gap-3">
           <FavoriteButton property={{
-            id: p.id, slug: p.slug, title: localized(p.title), coverUrl: p.coverImage?.url,
+            id: p.id, slug: p.slug, title: localized(p.title, locale), coverUrl: p.coverImage?.url,
             price: p.promotion?.finalPrice ?? p.price?.sale ?? p.price?.rentMonthly, code: p.code,
           }} />
-          <ShareButtons title={localized(p.title)} />
+          <ShareButtons title={localized(p.title, locale)} />
         </div>
       </div>
 
@@ -85,14 +89,14 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
           </div>
 
           {p.description && (
-            <p className="text-white/80 leading-relaxed whitespace-pre-line mb-8">{localized(p.description)}</p>
+            <p className="text-white/80 leading-relaxed whitespace-pre-line mb-8">{localized(p.description, locale)}</p>
           )}
 
           {p.highlights?.length > 0 && (
             <ul className="space-y-2 mb-8">
               {p.highlights.map((h: any, i: number) => (
                 <li key={i} className="flex gap-3 text-sm">
-                  <span className="text-red">—</span>{localized(h)}
+                  <span className="text-red">—</span>{localized(h, locale)}
                 </li>
               ))}
             </ul>
@@ -100,7 +104,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
 
           {p.location?.address && (
             <p className="text-sm text-muted mb-6">
-              ทำเล: {localized(p.location.address)} {p.location.zone ? `(${p.location.zone})` : ''}
+              ทำเล: {localized(p.location.address, locale)} {p.location.zone ? `(${p.location.zone})` : ''}
             </p>
           )}
 
@@ -128,6 +132,16 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
           <LeadForm propertyId={p.id} source="property_form" />
         </aside>
       </div>
+
+      {p.relatedProperties?.length > 0 && (
+        <div className="mt-16 pt-12 border-t border-white/10">
+          <p className="eyebrow mb-2">Related</p>
+          <h2 className="font-thai-display text-2xl font-light mb-8">ทรัพย์ใกล้เคียงที่น่าสนใจ</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {p.relatedProperties.map((rp: any) => <PropertyCard key={rp.id} p={rp} locale={locale} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

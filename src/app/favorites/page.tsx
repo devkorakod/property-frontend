@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { readFavorites, toggleFavorite, onFavoritesChange, type FavoriteProperty } from '@/lib/favorites';
 import { formatPrice } from '@/lib/format';
@@ -29,10 +30,11 @@ export default function FavoritesPage() {
           {items.map((f) => (
             <div key={f.id} className="group relative">
               <Link href={`/properties/${f.slug}`} className="block">
-                <div className="aspect-[3/2] bg-ink-soft overflow-hidden">
+                <div className="aspect-[3/2] bg-ink-soft overflow-hidden relative">
                   {f.coverUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={f.coverUrl} alt={f.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={f.coverUrl} alt={f.title} fill
+                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                           className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : null}
                 </div>
                 <div className="pt-4">

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export interface RichTextData {
   eyebrow?: string; heading?: string; body?: string;
   imageUrl?: string; imagePosition?: 'left' | 'right' | 'none';
@@ -16,8 +18,9 @@ export function RichTextSection({ data }: { data: RichTextData }) {
   );
 
   const image = hasImage ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={data.imageUrl} alt="" className="w-full aspect-[4/3] object-cover" />
+    <div className="relative w-full aspect-[4/3]">
+      <Image src={data.imageUrl!} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+    </div>
   ) : null;
 
   return (
