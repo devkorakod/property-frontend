@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { listProjects } from '@/lib/api';
 import { localized } from '@/lib/format';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
-export const metadata = { title: 'โครงการทั้งหมด' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: t(getLocale(), 'projects_metaTitle') };
+}
 
 export default async function ProjectsPage() {
   const projects = await listProjects().catch(() => []);
@@ -12,9 +16,9 @@ export default async function ProjectsPage() {
   return (
     <div className="max-w-container mx-auto px-5 py-14">
       <p className="eyebrow mb-2">Projects</p>
-      <h1 className="font-thai-display text-3xl font-light mb-10">โครงการทั้งหมด</h1>
+      <h1 className="font-thai-display text-3xl font-light mb-10">{t(locale, 'projects_pageHeading')}</h1>
       {projects.length === 0 ? (
-        <p className="text-muted py-20 text-center">ยังไม่มีโครงการที่เผยแพร่</p>
+        <p className="text-muted py-20 text-center">{t(locale, 'projects_empty')}</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((pr: any) => (

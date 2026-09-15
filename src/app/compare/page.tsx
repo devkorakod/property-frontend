@@ -4,11 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { readCompare, removeFromCompare, onCompareChange, type CompareProperty } from '@/lib/compare';
-import { formatPrice, formatSqm, PROPERTY_TYPE_LABEL } from '@/lib/format';
+import { formatPrice, formatSqm, propertyTypeLabel } from '@/lib/format';
+import { useLocale } from '@/lib/useLocale';
+import { t } from '@/lib/i18n';
 
 export default function ComparePage() {
   const [items, setItems] = useState<CompareProperty[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const locale = useLocale();
 
   useEffect(() => {
     setItems(readCompare());
@@ -17,23 +20,23 @@ export default function ComparePage() {
   }, []);
 
   const rows: { label: string; render: (p: CompareProperty) => React.ReactNode }[] = [
-    { label: 'ราคา', render: (p) => <span className="text-red-bright font-display">{formatPrice(p.price)}</span> },
-    { label: 'ประเภท', render: (p) => PROPERTY_TYPE_LABEL[p.propertyType ?? ''] ?? p.propertyType ?? '—' },
-    { label: 'ทำเล', render: (p) => p.location?.zone || '—' },
-    { label: 'ห้องนอน', render: (p) => p.spec?.bedrooms ?? '—' },
-    { label: 'ห้องน้ำ', render: (p) => p.spec?.bathrooms ?? '—' },
-    { label: 'ที่จอดรถ', render: (p) => p.spec?.parking ?? '—' },
-    { label: 'พื้นที่ใช้สอย', render: (p) => (p.area?.usableSqm ? formatSqm(p.area.usableSqm) : '—') },
+    { label: t(locale, 'compare_row_price'), render: (p) => <span className="text-red-bright font-display">{formatPrice(p.price, locale)}</span> },
+    { label: t(locale, 'compare_row_type'), render: (p) => propertyTypeLabel(p.propertyType, locale) || '—' },
+    { label: t(locale, 'compare_row_zone'), render: (p) => p.location?.zone || '—' },
+    { label: t(locale, 'compare_row_bedrooms'), render: (p) => p.spec?.bedrooms ?? '—' },
+    { label: t(locale, 'compare_row_bathrooms'), render: (p) => p.spec?.bathrooms ?? '—' },
+    { label: t(locale, 'compare_row_parking'), render: (p) => p.spec?.parking ?? '—' },
+    { label: t(locale, 'compare_row_usableArea'), render: (p) => (p.area?.usableSqm ? formatSqm(p.area.usableSqm, locale) : '—') },
   ];
 
   return (
     <div className="max-w-container mx-auto px-5 py-14">
       <p className="eyebrow mb-2">Compare</p>
-      <h1 className="font-thai-display text-3xl font-light mb-10">เปรียบเทียบทรัพย์</h1>
+      <h1 className="font-thai-display text-3xl font-light mb-10">{t(locale, 'compare_page_title')}</h1>
 
       {!loaded ? null : items.length < 2 ? (
         <p className="text-muted py-20 text-center">
-          เลือกทรัพย์อย่างน้อย 2 รายการเพื่อเปรียบเทียบ — กดปุ่ม &quot;เทียบ&quot; ที่การ์ดทรัพย์
+          {t(locale, 'compare_page_empty')}
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -55,7 +58,7 @@ export default function ComparePage() {
                     </Link>
                     <button onClick={() => removeFromCompare(p.id)}
                             className="text-[11px] text-muted hover:text-red underline mt-2">
-                      เอาออก
+                      {t(locale, 'compare_page_removeRow')}
                     </button>
                   </th>
                 ))}

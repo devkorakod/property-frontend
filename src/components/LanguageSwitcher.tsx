@@ -1,14 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import type { Locale } from '@/lib/locale';
 
 export function LanguageSwitcher({ current }: { current: Locale }) {
-  const router = useRouter();
-
   function setLocale(locale: Locale) {
+    if (locale === current) return;
     document.cookie = `locale=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
-    router.refresh();
+    // full reload so every server- and client-rendered piece of the page (including
+    // client-only pages like /compare that can't read the cookie via next/headers) picks it up
+    window.location.reload();
   }
 
   return (

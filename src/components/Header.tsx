@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export function Header({ settings }: { settings?: any }) {
@@ -12,12 +13,12 @@ export function Header({ settings }: { settings?: any }) {
           D1<span className="text-red">·</span>LAND AND HOUSE
         </Link>
         <nav className="flex gap-6 text-sm flex-wrap">
-          <Link href="/properties?listingType=sale" className="hover:text-red transition-colors">ซื้อ</Link>
-          <Link href="/properties?listingType=rent" className="hover:text-red transition-colors">เช่า</Link>
-          <Link href="/projects" className="hover:text-red transition-colors">โครงการ</Link>
-          <Link href="/loan-calculator" className="hover:text-red transition-colors">คำนวณสินเชื่อ</Link>
-          <Link href="/favorites" className="hover:text-red transition-colors">รายการโปรด</Link>
-          <Link href="/contact" className="hover:text-red transition-colors">ติดต่อเรา</Link>
+          <Link href="/properties?listingType=sale" className="hover:text-red transition-colors">{t(locale, 'nav_buy')}</Link>
+          <Link href="/properties?listingType=rent" className="hover:text-red transition-colors">{t(locale, 'nav_rent')}</Link>
+          <Link href="/projects" className="hover:text-red transition-colors">{t(locale, 'nav_projects')}</Link>
+          <Link href="/loan-calculator" className="hover:text-red transition-colors">{t(locale, 'nav_loanCalculator')}</Link>
+          <Link href="/favorites" className="hover:text-red transition-colors">{t(locale, 'nav_favorites')}</Link>
+          <Link href="/contact" className="hover:text-red transition-colors">{t(locale, 'nav_contact')}</Link>
         </nav>
         <div className="ml-auto flex items-center gap-4">
           <LanguageSwitcher current={locale} />

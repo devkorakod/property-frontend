@@ -5,6 +5,7 @@ import { PropertyCard } from '@/components/PropertyCard';
 import { localized } from '@/lib/format';
 import { ApiClientError } from '@/lib/api';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
   let project;
@@ -31,13 +32,13 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
         <p className="text-white/80 leading-relaxed max-w-3xl mb-10">{localized(project.description, locale)}</p>
       )}
 
-      <h2 className="font-thai-display text-2xl font-light mb-6">ยูนิตที่ว่าง</h2>
+      <h2 className="font-thai-display text-2xl font-light mb-6">{t(locale, 'projectDetail_unitsHeading')}</h2>
       {project.units?.length ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {project.units.map((u: any) => <PropertyCard key={u._id ?? u.slug} p={u} locale={locale} />)}
         </div>
       ) : (
-        <p className="text-muted">ยังไม่มียูนิตที่เผยแพร่ในขณะนี้</p>
+        <p className="text-muted">{t(locale, 'projectDetail_noUnits')}</p>
       )}
     </div>
   );

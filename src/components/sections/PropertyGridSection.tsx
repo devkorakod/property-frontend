@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PropertyCard } from '@/components/PropertyCard';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
 export interface PropertyGridData { eyebrow?: string; heading?: string }
 
@@ -17,7 +18,7 @@ export function PropertyGridSection({ data, items, moreHref = '/properties', bor
           {data.heading && <h2 className="font-thai-display text-3xl font-light">{data.heading}</h2>}
         </div>
         <Link href={moreHref} className="ml-auto text-xs uppercase tracking-[.14em] text-red border-b border-line pb-1">
-          ดูทั้งหมด
+          {t(locale, 'sectionGrid_viewAll')}
         </Link>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">

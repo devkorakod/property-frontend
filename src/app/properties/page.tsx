@@ -1,18 +1,15 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { listProperties } from '@/lib/api';
 import { PropertyCard } from '@/components/PropertyCard';
 import { PropertyAlertForm } from '@/components/PropertyAlertForm';
-import { PROPERTY_TYPE_LABEL } from '@/lib/format';
+import { propertyTypeLabels } from '@/lib/format';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
-export const metadata = { title: 'ทรัพย์ทั้งหมด' };
-
-const SORT_OPTIONS: Record<string, string> = {
-  newest: 'ใหม่ล่าสุด',
-  featured: 'แนะนำ',
-  price_asc: 'ราคา: ต่ำ-สูง',
-  price_desc: 'ราคา: สูง-ต่ำ',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: t(getLocale(), 'properties_metaTitle') };
+}
 
 export default async function PropertiesPage({
   searchParams,
@@ -29,55 +26,61 @@ export default async function PropertiesPage({
     page: searchParams.page,
   }).catch(() => ({ items: [] as any[], meta: undefined }));
   const locale = getLocale();
+  const sortOptions: Record<string, string> = {
+    newest: t(locale, 'properties_sort_newest'),
+    featured: t(locale, 'properties_sort_featured'),
+    price_asc: t(locale, 'properties_sort_priceAsc'),
+    price_desc: t(locale, 'properties_sort_priceDesc'),
+  };
 
   return (
     <div className="max-w-container mx-auto px-5 py-14">
       <p className="eyebrow mb-2">Properties</p>
-      <h1 className="font-thai-display text-3xl font-light mb-8">ทรัพย์ทั้งหมด</h1>
+      <h1 className="font-thai-display text-3xl font-light mb-8">{t(locale, 'properties_pageHeading')}</h1>
 
       <form className="flex flex-wrap gap-3 mb-10 text-sm" method="get">
-        <input name="keyword" defaultValue={searchParams.keyword ?? ''} placeholder="ค้นหาชื่อทรัพย์ โครงการ คำอธิบาย..."
+        <input name="keyword" defaultValue={searchParams.keyword ?? ''} placeholder={t(locale, 'properties_keywordPlaceholder')}
                className="bg-ink-soft border border-white/20 px-3 py-2 flex-1 min-w-[200px]" />
         <select name="propertyType" defaultValue={searchParams.propertyType ?? ''}
                 className="bg-ink-soft border border-white/20 px-3 py-2">
-          <option value="">ทุกประเภท</option>
-          {Object.entries(PROPERTY_TYPE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          <option value="">{t(locale, 'properties_allTypes')}</option>
+          {Object.entries(propertyTypeLabels(locale)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
         <select name="listingType" defaultValue={searchParams.listingType ?? ''}
                 className="bg-ink-soft border border-white/20 px-3 py-2">
-          <option value="">ขาย/เช่า</option>
-          <option value="sale">ขาย</option>
-          <option value="rent">เช่า</option>
+          <option value="">{t(locale, 'properties_saleOrRent')}</option>
+          <option value="sale">{t(locale, 'nav_buy')}</option>
+          <option value="rent">{t(locale, 'nav_rent')}</option>
         </select>
-        <input name="zone" defaultValue={searchParams.zone ?? ''} placeholder="ทำเล เช่น ทองหล่อ"
+        <input name="zone" defaultValue={searchParams.zone ?? ''} placeholder={t(locale, 'properties_zonePlaceholder')}
                className="bg-ink-soft border border-white/20 px-3 py-2" />
         <input name="minPrice" type="number" min={0} step={1000} defaultValue={searchParams.minPrice ?? ''}
-               placeholder="ราคาต่ำสุด" className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
+               placeholder={t(locale, 'properties_minPricePlaceholder')} className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
         <input name="maxPrice" type="number" min={0} step={1000} defaultValue={searchParams.maxPrice ?? ''}
-               placeholder="ราคาสูงสุด" className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
+               placeholder={t(locale, 'properties_maxPricePlaceholder')} className="bg-ink-soft border border-white/20 px-3 py-2 w-36" />
         <select name="sort" defaultValue={searchParams.sort ?? 'featured'}
                 className="bg-ink-soft border border-white/20 px-3 py-2">
-          {Object.entries(SORT_OPTIONS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          {Object.entries(sortOptions).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
         <button className="bg-red hover:bg-red-bright text-white px-6 py-2 uppercase text-xs tracking-[.14em]">
-          ค้นหา
+          {t(locale, 'properties_search')}
         </button>
       </form>
 
       {items.length === 0 ? (
-        <p className="text-muted py-20 text-center">ไม่พบทรัพย์ที่ตรงกับเงื่อนไข</p>
+        <p className="text-muted py-20 text-center">{t(locale, 'properties_empty')}</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((p: any) => <PropertyCard key={p.id} p={p} locale={locale} />)}
         </div>
       )}
-      {meta && <p className="text-muted text-xs mt-10 text-center">พบทั้งหมด {meta.total} รายการ</p>}
+      {meta && <p className="text-muted text-xs mt-10 text-center">{t(locale, 'properties_totalFound', { n: meta.total })}</p>}
       {meta && meta.totalPages > 1 && (
-        <Pagination page={meta.page} totalPages={meta.totalPages} searchParams={searchParams} />
+        <Pagination page={meta.page} totalPages={meta.totalPages} searchParams={searchParams} locale={locale} />
       )}
 
       <div className="mt-16 pt-10 border-t border-white/10">
-        <PropertyAlertForm criteria={{
+        <PropertyAlertForm locale={locale} criteria={{
           propertyType: searchParams.propertyType, listingType: searchParams.listingType,
           zone: searchParams.zone, minPrice: searchParams.minPrice, maxPrice: searchParams.maxPrice,
         }} />
@@ -86,8 +89,8 @@ export default async function PropertiesPage({
   );
 }
 
-function Pagination({ page, totalPages, searchParams }: {
-  page: number; totalPages: number; searchParams: Record<string, string | undefined>;
+function Pagination({ page, totalPages, searchParams, locale }: {
+  page: number; totalPages: number; searchParams: Record<string, string | undefined>; locale: import('@/lib/locale').Locale;
 }) {
   const hrefFor = (p: number) => {
     const qs = new URLSearchParams(
@@ -102,7 +105,7 @@ function Pagination({ page, totalPages, searchParams }: {
     <div className="flex justify-center items-center gap-2 mt-6 text-sm">
       <Link href={hrefFor(Math.max(1, page - 1))} aria-disabled={page <= 1}
             className={`px-3 py-1.5 border border-white/20 ${page <= 1 ? 'pointer-events-none opacity-30' : 'hover:border-red hover:text-red'}`}>
-        ก่อนหน้า
+        {t(locale, 'pagination_prev')}
       </Link>
       {pages.map((p) => (
         <Link key={p} href={hrefFor(p)}
@@ -112,7 +115,7 @@ function Pagination({ page, totalPages, searchParams }: {
       ))}
       <Link href={hrefFor(Math.min(totalPages, page + 1))} aria-disabled={page >= totalPages}
             className={`px-3 py-1.5 border border-white/20 ${page >= totalPages ? 'pointer-events-none opacity-30' : 'hover:border-red hover:text-red'}`}>
-        ถัดไป
+        {t(locale, 'pagination_next')}
       </Link>
     </div>
   );

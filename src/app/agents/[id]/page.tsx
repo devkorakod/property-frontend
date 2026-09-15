@@ -5,6 +5,7 @@ import { getAgent, ApiClientError } from '@/lib/api';
 import { PropertyCard } from '@/components/PropertyCard';
 import { localized } from '@/lib/format';
 import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
 async function loadAgent(id: string) {
   try {
@@ -17,7 +18,8 @@ async function loadAgent(id: string) {
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const agent = await loadAgent(params.id);
-  return { title: agent ? `${agent.name} — ตัวแทนอสังหาริมทรัพย์` : 'ตัวแทน' };
+  const locale = getLocale();
+  return { title: agent ? `${agent.name} ${t(locale, 'agent_metaSuffix')}` : t(locale, 'agent_metaFallback') };
 }
 
 export default async function AgentPage({ params }: { params: { id: string } }) {
@@ -34,7 +36,7 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
           )}
         </div>
         <div>
-          <p className="eyebrow mb-1">ตัวแทนอสังหาริมทรัพย์</p>
+          <p className="eyebrow mb-1">{t(locale, 'agent_eyebrow')}</p>
           <h1 className="font-thai-display text-2xl font-light">{agent.name}</h1>
           <div className="flex gap-4 mt-2 text-sm">
             {agent.phone && <a href={`tel:${agent.phone}`} className="text-red hover:text-red-bright">{agent.phone}</a>}
@@ -45,10 +47,10 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
       </div>
 
       <h2 className="font-thai-display text-xl font-light mb-8">
-        ทรัพย์ที่ดูแล ({agent.properties.length})
+        {t(locale, 'agent_propertiesHeading', { n: agent.properties.length })}
       </h2>
       {agent.properties.length === 0 ? (
-        <p className="text-muted py-10 text-center">ยังไม่มีทรัพย์ที่เผยแพร่</p>
+        <p className="text-muted py-10 text-center">{t(locale, 'agent_noProperties')}</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {agent.properties.map((p: any) => <PropertyCard key={p.id} p={p} locale={locale} />)}

@@ -1,8 +1,10 @@
 import { LeadForm } from '@/components/LeadForm';
+import { getLocale } from '@/lib/locale';
 
 export interface LeadFormBannerData { eyebrow?: string; heading?: string; body?: string }
 
 export function LeadFormBannerSection({ data }: { data: LeadFormBannerData }) {
+  const locale = getLocale();
   return (
     <section className="bg-white text-ink py-16">
       <div className="max-w-container mx-auto px-5 grid lg:grid-cols-2 gap-12">
@@ -13,7 +15,7 @@ export function LeadFormBannerSection({ data }: { data: LeadFormBannerData }) {
         </div>
         <div className="text-white">
           <div className="bg-ink p-6">
-            <LeadForm source="general_form" />
+            <LeadForm source="general_form" locale={locale} />
           </div>
         </div>
       </div>

@@ -1,6 +1,10 @@
+import { getLocale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
+
 export function FloatingContact({ settings }: { settings?: any }) {
   const cc = settings?.contactChannels ?? {};
   const phone = cc.phone || '02-123-4567';
+  const locale = getLocale();
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 items-end">
       {cc.lineUrl && (
@@ -11,7 +15,7 @@ export function FloatingContact({ settings }: { settings?: any }) {
       )}
       <a href={`tel:${phone}`}
          className="bg-red hover:bg-red-bright text-white text-sm px-5 py-3 uppercase tracking-[.1em]">
-        โทรเลย
+        {t(locale, 'floatingContact_callNow')}
       </a>
     </div>
   );

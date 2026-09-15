@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { BASE } from '@/lib/api';
+import type { Locale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
 export interface AlertCriteria {
   propertyType?: string; listingType?: string; zone?: string;
   minPrice?: string; maxPrice?: string;
 }
 
-export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria }) {
+export function PropertyAlertForm({ criteria = {}, locale = 'th' }: { criteria?: AlertCriteria; locale?: Locale }) {
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
@@ -25,24 +27,22 @@ export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria 
         body: JSON.stringify({ email, website, ...criteria }),
       });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json?.error?.message ?? 'ผิดพลาด');
-      setMessage(json.data.message.th);
+      if (!res.ok || !json.success) throw new Error(json?.error?.message ?? t(locale, 'alertForm_genericError'));
+      setMessage(json.data.message[locale] ?? json.data.message.th);
       setStatus('done');
       setEmail('');
     } catch {
       setStatus('error');
-      setMessage('ส่งไม่สำเร็จ ลองใหม่อีกครั้ง');
+      setMessage(t(locale, 'alertForm_error'));
     }
   }
 
   return (
     <div className="max-w-lg mx-auto text-center">
-      <p className="eyebrow mb-2">Property Alert</p>
-      <h2 className="font-thai-display text-2xl font-light mb-2">แจ้งเตือนเมื่อมีทรัพย์ใหม่ตรงใจ</h2>
+      <p className="eyebrow mb-2">{t(locale, 'alertForm_eyebrow')}</p>
+      <h2 className="font-thai-display text-2xl font-light mb-2">{t(locale, 'alertForm_heading')}</h2>
       <p className="text-muted text-sm mb-6">
-        {hasCriteria
-          ? 'ฝากอีเมลไว้ เราจะแจ้งทันทีที่มีทรัพย์ใหม่ตรงเงื่อนไขการค้นหาด้านบน'
-          : 'ฝากอีเมลไว้ เราจะแจ้งทันทีที่มีทรัพย์ใหม่ลงประกาศ'}
+        {hasCriteria ? t(locale, 'alertForm_body_withCriteria') : t(locale, 'alertForm_body_default')}
       </p>
       {status === 'done' ? (
         <p className="text-green-500 text-sm">{message}</p>
@@ -53,11 +53,11 @@ export function PropertyAlertForm({ criteria = {} }: { criteria?: AlertCriteria 
                  tabIndex={-1} autoComplete="off" aria-hidden="true"
                  className="absolute -left-[9999px] w-px h-px opacity-0" />
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                 placeholder="อีเมลของคุณ" disabled={status === 'busy'}
+                 placeholder={t(locale, 'alertForm_emailPlaceholder')} disabled={status === 'busy'}
                  className="bg-ink-soft border border-white/20 px-3 py-2 text-sm flex-1 min-w-[220px]" />
           <button disabled={status === 'busy'}
                   className="bg-red hover:bg-red-bright text-white px-6 py-2 uppercase text-xs tracking-[.14em] disabled:opacity-60">
-            {status === 'busy' ? 'กำลังส่ง...' : 'แจ้งเตือนฉัน'}
+            {status === 'busy' ? t(locale, 'alertForm_sending') : t(locale, 'alertForm_submit')}
           </button>
         </form>
       )}

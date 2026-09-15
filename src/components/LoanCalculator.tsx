@@ -1,15 +1,17 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { formatPrice } from '@/lib/format';
+import { formatPrice, localized } from '@/lib/format';
+import type { Locale } from '@/lib/locale';
+import { t } from '@/lib/i18n';
 
 export interface LoanDefaults {
   interestRate: number; termYears: number; downPaymentPercent: number;
   disclaimer?: { th?: string; en?: string };
 }
 
-export function LoanCalculator({ defaults, initialPrice, compact = false }: {
-  defaults: LoanDefaults; initialPrice?: number; compact?: boolean;
+export function LoanCalculator({ defaults, initialPrice, compact = false, locale = 'th' }: {
+  defaults: LoanDefaults; initialPrice?: number; compact?: boolean; locale?: Locale;
 }) {
   const [price, setPrice] = useState(initialPrice ?? 3_000_000);
   const [downPaymentPercent, setDownPaymentPercent] = useState(defaults.downPaymentPercent);
@@ -30,22 +32,22 @@ export function LoanCalculator({ defaults, initialPrice, compact = false }: {
   return (
     <div className={compact ? '' : 'max-w-2xl mx-auto'}>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <Field label="ราคาทรัพย์ (บาท)">
+        <Field label={t(locale, 'loan_priceLabel')}>
           <input type="number" min={0} step={10000} value={price}
                  onChange={(e) => setPrice(Number(e.target.value))}
                  className="bg-ink-soft border border-white/20 px-3 py-2 w-full" />
         </Field>
-        <Field label={`เงินดาวน์ (${downPaymentPercent}%)`}>
+        <Field label={t(locale, 'loan_downPaymentLabel', { pct: downPaymentPercent })}>
           <input type="range" min={0} max={50} step={5} value={downPaymentPercent}
                  onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
                  className="w-full" />
         </Field>
-        <Field label={`ดอกเบี้ย (${interestRate}% ต่อปี)`}>
+        <Field label={t(locale, 'loan_interestLabel', { rate: interestRate })}>
           <input type="range" min={0} max={10} step={0.1} value={interestRate}
                  onChange={(e) => setInterestRate(Number(e.target.value))}
                  className="w-full" />
         </Field>
-        <Field label={`ระยะเวลาผ่อน (${termYears} ปี)`}>
+        <Field label={t(locale, 'loan_termLabel', { years: termYears })}>
           <input type="range" min={5} max={35} step={1} value={termYears}
                  onChange={(e) => setTermYears(Number(e.target.value))}
                  className="w-full" />
@@ -54,21 +56,21 @@ export function LoanCalculator({ defaults, initialPrice, compact = false }: {
 
       <div className="bg-ink-soft border border-white/10 p-5 grid sm:grid-cols-3 gap-4 text-center">
         <div>
-          <p className="text-muted text-xs mb-1">เงินดาวน์</p>
-          <p className="font-display text-lg">{formatPrice(downPayment)}</p>
+          <p className="text-muted text-xs mb-1">{t(locale, 'loan_downPayment')}</p>
+          <p className="font-display text-lg">{formatPrice(downPayment, locale)}</p>
         </div>
         <div>
-          <p className="text-muted text-xs mb-1">ยอดกู้</p>
-          <p className="font-display text-lg">{formatPrice(loanAmount)}</p>
+          <p className="text-muted text-xs mb-1">{t(locale, 'loan_loanAmount')}</p>
+          <p className="font-display text-lg">{formatPrice(loanAmount, locale)}</p>
         </div>
         <div>
-          <p className="text-muted text-xs mb-1">ผ่อนต่อเดือน (ประมาณ)</p>
-          <p className="font-display text-lg text-red-bright">{formatPrice(monthlyPayment)}</p>
+          <p className="text-muted text-xs mb-1">{t(locale, 'loan_monthlyPayment')}</p>
+          <p className="font-display text-lg text-red-bright">{formatPrice(monthlyPayment, locale)}</p>
         </div>
       </div>
 
       {defaults.disclaimer?.th && (
-        <p className="text-muted text-xs mt-4">{defaults.disclaimer.th}</p>
+        <p className="text-muted text-xs mt-4">{localized(defaults.disclaimer, locale)}</p>
       )}
     </div>
   );
